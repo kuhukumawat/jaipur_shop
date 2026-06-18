@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { useDropzone } from 'react-dropzone'
 import { Upload, X, Save } from 'lucide-react'
-import { productAPI, categoryAPI } from '@/lib/api'
+import { productAPI } from '@/lib/api'
 import { toast } from 'sonner'
-import { type Product, type Category } from '@/types'
+import { type Product } from '@/types'
 
 interface ProductFormProps {
   product?: Product;
@@ -23,12 +23,10 @@ interface FormValues {
   unit: string;
   tags?: string;
   isActive: boolean;
-  category: string;
 }
 
 export function ProductForm({ product }: ProductFormProps) {
   const router = useRouter()
-  const [categories, setCategories] = useState<Category[]>([])
   const [newFiles, setNewFiles] = useState<File[]>([])
   const [loading, setLoading] = useState(false)
 
@@ -44,13 +42,8 @@ export function ProductForm({ product }: ProductFormProps) {
       unit: product.unit,
       tags: product.tags?.join(', ') || '',
       isActive: product.isActive ?? true,
-      category: product.category?._id || '',
     } : { unit: 'pcs', lowStockThreshold: 10, isActive: true } as any
   })
-
-  useEffect(() => {
-    categoryAPI.getAll().then((res) => setCategories(res.data.data || []))
-  }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { 'image/*': [] },
@@ -116,21 +109,6 @@ export function ProductForm({ product }: ProductFormProps) {
                   rows={3}
                   className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 resize-y"
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
-                <select
-                  {...register('category', { required: 'Required' })}
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary-600 bg-white"
-                >
-                  <option value="">Select category</option>
-                  {categories.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                {errors.category && <p className="text-xs text-red-500 mt-1">{errors.category.message}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tags (comma separated)</label>

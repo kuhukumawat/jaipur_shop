@@ -40,19 +40,16 @@ export const authAPI = {
   changePassword: (data: any) => api.put('/auth/me/password', data),
 }
 
+export const categoryAPI = {
+  getAll: () => api.get('/categories')
+}
+
 export const productAPI = {
   getAll: (params?: any) => api.get('/products', { params }),
   getById: (id: string) => api.get(`/products/${id}`),
   create: (data: FormData) => api.post('/products', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
   update: (id: string, data: FormData) => api.put(`/products/${id}`, data, { headers: { 'Content-Type': 'multipart/form-data' } }),
   delete: (id: string) => api.delete(`/products/${id}`),
-}
-
-export const categoryAPI = {
-  getAll: () => api.get('/categories'),
-  create: (data: FormData) => api.post('/categories', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
-  update: (id: string, data: any) => api.put(`/categories/${id}`, data),
-  delete: (id: string) => api.delete(`/categories/${id}`),
 }
 
 export const cartAPI = {

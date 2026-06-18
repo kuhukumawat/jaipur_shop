@@ -1,10 +1,3 @@
-export interface Category {
-  _id: string;
-  name: string;
-  description?: string;
-  image?: { url: string };
-}
-
 export interface ProductImage {
   url: string;
   publicId?: string;
@@ -20,8 +13,8 @@ export interface Product {
   unit: string;
   stock: number;
   lowStockThreshold: number;
+  category: string;
   images?: ProductImage[];
-  category?: Category;
   tags?: string[];
   isActive?: boolean;
   createdAt?: string;
@@ -83,3 +76,8 @@ export interface InventoryOverview {
   lowStockCount: number;
   outOfStockCount: number;
 }
+export interface Category {
+  _id: string;
+  title: string;
+}
+

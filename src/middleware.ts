@@ -14,7 +14,7 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  if (pathname.startsWith('/orders') || pathname === '/cart') {
+  if (pathname.startsWith('/orders')) {
     if (!token) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
@@ -24,5 +24,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/orders/:path*', '/cart'],
+  matcher: ['/admin/:path*', '/orders/:path*'],
 }

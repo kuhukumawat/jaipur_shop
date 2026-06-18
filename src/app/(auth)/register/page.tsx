@@ -20,11 +20,11 @@ export default function RegisterPage() {
   const onSubmit = async (data: any) => {
     setLoading(true)
     try {
-      const res = await authAPI.register({ name: data.name, email: data.email, password: data.password })
+      const res = await authAPI.register({ name: data.name, email: data.email, password: data.password, role: 'user' })
       const { user, token } = res.data.data
       login(user, token)
       toast.success('Account created successfully!')
-      router.replace('/products')
+      router.back()
     } catch (err: any) {
       toast.error(err.message || 'An error occurred')
     } finally {

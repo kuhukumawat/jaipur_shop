@@ -23,7 +23,7 @@ export default function LoginPage() {
       const { user, token } = res.data.data
       login(user, token)
       toast.success(`Welcome back, ${user.name}!`)
-      router.replace(user.role === 'admin' ? '/admin' : '/products')
+      router.back()
     } catch (err: any) {
       toast.error(err.message || 'An error occurred')
     } finally {

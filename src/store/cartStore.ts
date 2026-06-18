@@ -2,6 +2,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { type Product, type CartItem } from '@/types'
+import { cartAPI } from '@/lib/api'
 
 interface CartState {
   items: CartItem[];
@@ -9,8 +10,9 @@ interface CartState {
   itemCount: number;
   total: number;
   addItem: (product: Product, quantity?: number) => void;
-  removeItem: (productId: string) => void;
-  updateQuantity: (productId: string, quantity: number) => void;
+  removeItem: (productId: string) => Promise<void>;
+  updateQuantity: (productId: string, quantity: number) => Promise<void>;
+  fetchCart: () => Promise<void>;
   clearCart: () => void;
   toggleCart: () => void;
   openCart: () => void;
@@ -39,14 +41,27 @@ export const useCartStore = create<CartState>()(
           set({ items: [...items, { product, quantity }] })
         }
       },
-      removeItem: (productId) =>
-        set({ items: get().items.filter((i) => i.product._id !== productId) }),
-      updateQuantity: (productId, quantity) => {
+      // Fetch cart from backend
+      fetchCart: async () => {
+        const res = await cartAPI.get()
+        // Assuming response data structure: { data: { items: [...] } }
+        set({ items: res.data?.data?.items || [] })
+      },
+      removeItem: async (productId) => {
+        await cartAPI.removeItem(productId)
+        const res = await cartAPI.get()
+        set({ items: res.data?.data?.items || [] })
+      },
+      updateQuantity: async (productId, quantity) => {
         if (quantity < 1) {
-          get().removeItem(productId)
+          await cartAPI.removeItem(productId)
+          const res = await cartAPI.get()
+          set({ items: res.data?.data?.items || [] })
           return
         }
-        set({ items: get().items.map((i) => i.product._id === productId ? { ...i, quantity } : i) })
+        await cartAPI.updateItem(productId, quantity)
+        const res = await cartAPI.get()
+        set({ items: res.data?.data?.items || [] })
       },
       clearCart: () => set({ items: [] }),
       toggleCart: () => set({ isOpen: !get().isOpen }),
